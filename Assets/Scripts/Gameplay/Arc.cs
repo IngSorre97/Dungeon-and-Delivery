@@ -18,29 +18,42 @@ public class Arc : MonoBehaviour
     [Header("Enemy UI")]
     [SerializeField] private Transform enemyUI;
     [SerializeField] private TextMeshProUGUI enemyName;
-    [SerializeField] private TextMeshProUGUI currentHealth;
+    [SerializeField] private TextMeshProUGUI health;
     [SerializeField] private Image alertHealth;
     [SerializeField] private TextMeshProUGUI damage;
     [SerializeField] private Image damageType;
     [SerializeField] private Image alertDamage;
 
-
     public void Initialize(){
         if (isVertical){
-            enemyUI.Rotate(0,0,90);
-            spotEnemy.Rotate(0,0,90);
-            spotPlayerLeft.Rotate(0,0,90);
-            spotPlayerRight.Rotate(0,0,90);
+            enemyUI.Rotate(0,0,-90);
+            spotEnemy.Rotate(0,0,-90);
+            spotPlayerLeft.Rotate(0,0,-90);
+            spotPlayerRight.Rotate(0,0,-90);
+        }
+
+        if (enemy == null) Destroy(enemyUI.gameObject);
+        else {
+            health.text = $"{enemy.currentHealth} / {enemy.maxHealth}";
+            damage.text = $"{enemy.minAttack} - {enemy.maxAttack}";
+            switch (enemy.damageType){
+                case DamageTypes.Normal:
+                    damageType.sprite = SpriteData.Instance.normalAttack;
+                    break;
+                case DamageTypes.Special:
+                    damageType.sprite = SpriteData.Instance.specialAttack;
+                    break;
+            }
         }
     }
 
     public Node GetOtherNode(Node node){
         if (firstNode != node && secondNode != node) return null;
-        return firstNode == node ? firstNode : secondNode;
+        return firstNode == node ? secondNode : firstNode;
     }
 
     public Transform GetClosestSpot(Node node){
         return ( Vector3.Distance(node.gameObject.transform.position, spotPlayerLeft.position) < Vector3.Distance(node.gameObject.transform.position, spotPlayerRight.position) ) ?
-            spotPlayerLeft : spotPlayerRight;
+            spotPlayerRight : spotPlayerLeft;
     }
 }

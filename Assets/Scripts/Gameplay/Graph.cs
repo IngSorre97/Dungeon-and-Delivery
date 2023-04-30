@@ -35,6 +35,12 @@ public class Graph : MonoBehaviour
     }
 
     private void InitializeArcs(){
-        
+        foreach(Transform child in arcs){
+            Arc arc = child.gameObject.GetComponent<Arc>();
+            if (arc == null)
+                Debug.LogWarning("Found arc " + child.name + " without the arc component");
+            else
+                arc.Initialize();
+        }
     }
 }

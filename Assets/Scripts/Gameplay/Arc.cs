@@ -12,6 +12,7 @@ public class Arc : MonoBehaviour
     [SerializeField] private Transform spotEnemy;
     [SerializeField] private Enemy enemy;
     public bool hasEnemy => ( enemy != null );
+    public Enemy getEnemy => enemy;
     [SerializeField] private Transform spotPlayerLeft;
     [SerializeField] private Transform spotPlayerRight;
 
@@ -35,7 +36,7 @@ public class Arc : MonoBehaviour
         if (enemy == null) Destroy(enemyUI.gameObject);
         else {
             health.text = $"{enemy.currentHealth} / {enemy.maxHealth}";
-            damage.text = $"{enemy.minAttack} - {enemy.maxAttack}";
+            damage.text = $"{enemy.minDamage} - {enemy.maxDamage}";
             switch (enemy.damageType){
                 case DamageTypes.Normal:
                     damageType.sprite = SpriteData.Instance.normalAttack;

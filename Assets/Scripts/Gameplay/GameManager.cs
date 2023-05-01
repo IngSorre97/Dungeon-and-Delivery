@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Graph playGraph;
 
+    [SerializeField] private BattleAnimation battleAnimation;
+
     public GameStates currentState {get; private set;}
 
     public delegate void StatsChange(Player player);
@@ -25,6 +27,8 @@ public class GameManager : MonoBehaviour
 
     Graph.GraphData graphData;
     List<MovesBuffer.Move> storedMoves = null;
+
+
 
     void Start(){
         if (Instance == null) Instance = this;
@@ -102,8 +106,6 @@ public class GameManager : MonoBehaviour
         lastClicked.SetLastClicked(false);
         clickedNode.SetLastClicked(true);
         lastClicked = clickedNode;
-        //isMoving = true;
-        //MovementManager.Instance.StartMovement(player, clickedNode, targetArc);
     }
 
     public void OnPlayClicked(){
@@ -115,6 +117,7 @@ public class GameManager : MonoBehaviour
     public void PlayNextMove(){
         storedMoves.RemoveAt(0);
         if (storedMoves.Count > 0){
+            if (debug) Debug.Log("New move to be played");
             MovementManager.Instance.StartMovement(player, storedMoves[0]);
             isMoving = true;
         } else {
@@ -140,5 +143,48 @@ public class GameManager : MonoBehaviour
             graphData.startingNode.SetLastClicked(true);
         } else
             lastClicked.SetLastClicked(true);
+    }
+
+    public void StartBattle(Arc arc){
+        Enemy enemy = arc.getEnemy;
+        int enemyHealth = enemy.currentHealth;
+        int minEnemy = enemy.minDamage;
+        int maxEnemy = enemy.maxDamage;
+        
+        int playerHealth = player.currentHealth;
+        int minPlayer = player.minDamage;
+        int maxPlayer = player.maxDamage;
+
+        List<BattleAnimation.BattleMove> battleMoves = new List<BattleAnimation.BattleMove>();
+        bool isPlayerTurn = true;
+        int damage;
+
+        while (enemyHealth > 0 && playerHealth > 0){
+            if (isPlayerTurn){
+                damage = Random.Range(minPlayer, maxPlayer);
+                enemyHealth -= damage;
+            } else {
+                damage = Random.Range(minEnemy, maxEnemy);
+                playerHealth -= damage;
+            }
+            if (debug) Debug.Log($"Added a new move: it's {(isPlayerTurn ? "player" : "enemy")} turn and dealt {damage} points of damage");
+            battleMoves.Add(new BattleAnimation.BattleMove(isPlayerTurn, damage));
+            isPlayerTurn = !isPlayerTurn;
+        }
+        battleAnimation.gameObject.SetActive(true);
+        battleAnimation.StartBattle(battleMoves, player, enemy);
+        if (playerHealth > 0){
+            player.currentHealth = playerHealth;
+        } else {
+            GameOver();
+        }
+    }
+
+    public void FinishedBattle(){
+        PlayNextMove();
+    }
+
+    private void GameOver(){
+
     }
 }

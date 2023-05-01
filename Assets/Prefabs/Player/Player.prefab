@@ -98,10 +98,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02d5eb2db36a3bf40b3b1722c80d1648, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 0
-  currentHealth: 0
-  minDamage: 0
-  maxDamage: 0
+  maxHealth: 30
+  currentHealth: 30
+  minDamage: 2
+  maxDamage: 5
 --- !u!95 &2035840179211401626
 Animator:
   serializedVersion: 5

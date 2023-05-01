@@ -8,8 +8,8 @@ public class Enemy : MonoBehaviour
     public int maxHealth;
     public int currentHealth;
     
-    public int minAttack;
-    public int maxAttack;
+    public int minDamage;
+    public int maxDamage;
 
     public bool TakeDamage(int damage){
         currentHealth -= damage;

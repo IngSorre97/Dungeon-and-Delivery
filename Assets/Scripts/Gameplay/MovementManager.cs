@@ -9,6 +9,9 @@ public class MovementManager : MonoBehaviour
     [SerializeField] private float movementDuration = 1.0f;
     [SerializeField] private BattleAnimation battleAnimationPrefab;
 
+    private Transform pendingDestination;
+    private Player pendingPlayer;
+
     void Start(){
         if (Instance == null) Instance = this;
         else Destroy(this);
@@ -18,12 +21,12 @@ public class MovementManager : MonoBehaviour
         bool hasEnemy = move.arc.hasEnemy;
         Transform destination = hasEnemy ? move.arc.GetClosestSpot(move.node) : move.node.transform;
         player.SetNewDestination(hasEnemy ? null : move.node);
-        StartCoroutine(MoveCoroutine(player, destination, move.arc));
+        StartCoroutine(MoveCoroutine(player, destination, move.arc, move.node));
     }
 
-    private IEnumerator MoveCoroutine(Player player, Transform destination, Arc arc){
+    private IEnumerator MoveCoroutine(Player player, Transform destination, Arc arc, Node node){
         float time = 0;
-        Vector3 startPosition = player.gameObject.transform.position;
+        Vector3 startPosition = player.transform.position;
         while (time < movementDuration){
             time += Time.deltaTime;
             player.transform.position = Vector3.Lerp(startPosition, destination.position, time/movementDuration);
@@ -31,10 +34,32 @@ public class MovementManager : MonoBehaviour
         }
 
         if (arc.hasEnemy){
-            UIManager.Instance.StartBattle(arc);
+            pendingDestination = node.transform;
+            pendingPlayer = player;
+            GameManager.Instance.StartBattle(arc);
         } else {
             GameManager.Instance.PlayNextMove();
         }
         yield return null;
     }
+
+    public void FinishMovement(){
+        StartCoroutine(FinishedBattle());
+    }
+    
+    public IEnumerator FinishedBattle(){
+        if (GameManager.Instance.debug) Debug.Log("Pending movement coroutine is now going");
+        float time = 0;
+        Vector3 startPosition = pendingPlayer.transform.position;
+        while (time < movementDuration){
+            time += Time.deltaTime;
+            pendingPlayer.transform.position = Vector3.Lerp(startPosition, pendingDestination.position, time/movementDuration);
+            yield return null;
+        }
+        if (GameManager.Instance.debug) Debug.Log("Pending movement coroutine is now completed");
+        GameManager.Instance.FinishedBattle();
+        yield return null;
+    }
+
+
 }

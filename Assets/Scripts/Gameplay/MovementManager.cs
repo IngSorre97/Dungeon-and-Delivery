@@ -38,7 +38,7 @@ public class MovementManager : MonoBehaviour
             pendingPlayer = player;
             GameManager.Instance.StartBattle(arc);
         } else {
-            GameManager.Instance.PlayNextMove();
+            GameManager.Instance.NodeCheck();
         }
         yield return null;
     }

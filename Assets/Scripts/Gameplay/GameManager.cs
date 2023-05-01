@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour
         MovementManager.Instance.StartMovement(player, storedMoves[0]);
     }
 
-    public void PlayNextMove(){
+    public void NodeCheck(){
         if (playGraph.IsEndingNode(player.currentNode)){
             UIManager.Instance.Victory();
             return;
@@ -157,6 +157,13 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.GameOver();
             return;
         }
+
+        //Chiama PlayNextMove() quando hai finito
+        PlayNextMove();
+        // TODO Logica Item da prendere
+    }
+
+    public void PlayNextMove(){
         storedMoves.RemoveAt(0);
         if (storedMoves.Count > 0){
             if (debug) Debug.Log("New move to be played");
@@ -167,6 +174,8 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.GameOver();
         }
     }
+
+ 
 
     public void OnResetClicked(){
         if (isPlaying) return;
@@ -236,7 +245,7 @@ public class GameManager : MonoBehaviour
 
     public void FinishedBattle(){
         onStatsChanged?.Invoke(player);
-        PlayNextMove();
+        NodeCheck();
     }
 
     public void GameOver(){

@@ -75,5 +75,9 @@ public class Node : MonoBehaviour
         frame.color = highlight ? Color.green : Color.black;
     }
 
+    public bool isRight(Node node){
+        return node == right;
+    }
+
 
 }

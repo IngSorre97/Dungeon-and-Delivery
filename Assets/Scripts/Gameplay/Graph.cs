@@ -17,6 +17,9 @@ public class Graph : MonoBehaviour
     [SerializeField] private Transform nodes;
     [SerializeField] private Transform arcs;
     [SerializeField] private List<Node> endingNodes;
+    public bool IsEndingNode(Node node){
+        return endingNodes.Contains(node);
+    }
 
     public static Graph GenerateGraph(){
         return new Graph();

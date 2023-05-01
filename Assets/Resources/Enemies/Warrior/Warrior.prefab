@@ -101,8 +101,8 @@ MonoBehaviour:
   damageType: 0
   maxHealth: 10
   currentHealth: 10
-  minDamage: 2
-  maxDamage: 5
+  minDamage: 1
+  maxDamage: 3
 --- !u!95 &2714998492193990071
 Animator:
   serializedVersion: 5

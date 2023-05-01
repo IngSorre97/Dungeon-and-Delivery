@@ -8,17 +8,19 @@ public class MovesBuffer : MonoBehaviour
         public Arc arc;
         public Node node;
         public int index;
-        public Move(Arc arc, Node node, int index){
+        public bool isRight;
+        public Move(Arc arc, Node node, int index, bool isRight){
             this.arc = arc;
             this.node = node;
             this.index = index;
+            this.isRight = isRight;
         }
     }
     public List<Move> storedMoves {get; private set;} = new List<Move>();
     private int index = 1;
 
-    public void Add(Arc arc, Node node){
-        storedMoves.Add(new Move(arc, node, index));
+    public void Add(Arc arc, Node node, bool isRight){
+        storedMoves.Add(new Move(arc, node, index, isRight));
         node.SetCounter(index);
         index++;
     }
@@ -53,5 +55,10 @@ public class MovesBuffer : MonoBehaviour
             return storedMoves[storedMoves.Count - 1].node;
         }
         return null;
+    }
+
+    public void NewGame(){
+        index = 1;
+        storedMoves.Clear();
     }
 }

@@ -10,9 +10,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private List<ScriptableObject> enemiesPool;
 
-    [SerializeField] private Graph playGraph;
+    [SerializeField] private List<Graph> levels;
+    private int currentLevel = 0;
 
     [SerializeField] private BattleAnimation battleAnimation;
+
+    [SerializeField] private Camera mainCamera;
 
     public GameStates currentState {get; private set;}
 
@@ -25,7 +28,12 @@ public class GameManager : MonoBehaviour
     private bool isMoving = false;
     public bool isResetting = false;
 
+    public bool isPlaying = false;
+
+    private Arc pendingArc = null;
+
     Graph.GraphData graphData;
+    Graph playGraph;
     List<MovesBuffer.Move> storedMoves = null;
 
 
@@ -36,15 +44,35 @@ public class GameManager : MonoBehaviour
 
         movesBuffer = gameObject.AddComponent<MovesBuffer>();
 
-        if (playGraph == null)
-            playGraph = Graph.GenerateGraph();
 
+        if (levels.Count == 0)
+            levels.Add(Graph.GenerateGraph());
+
+        StartGame();
+    }
+
+    private void StartGame(){
+        movesBuffer.NewGame();
+
+        GameObject playGraphObject = Instantiate(levels[currentLevel].gameObject);
+        playGraph = playGraphObject.GetComponent<Graph>();
         playGraph.Initialize();
 
         graphData = playGraph.graphData;
+        if (player != null){
+            mainCamera.transform.SetParent(null);
+            Destroy(player.gameObject);
+            player = null;
+        }
+
+        isMoving = false;
+        isResetting = false;
+        isPlaying = false;
+
         GameObject playerObject = Instantiate(playerPrefab, graphData.startingNode.transform.position, Quaternion.identity);
         player = playerObject.GetComponent<Player>();
         player.Initialize(graphData.startingNode);
+        onStatsChanged?.Invoke(player);
 
         currentState = GameStates.Playing;
         lastClicked = graphData.startingNode;
@@ -81,7 +109,7 @@ public class GameManager : MonoBehaviour
 
         if (lastClicked != null && lastClicked == clickedNode) return;
 
-        bool isValid = false;
+        bool isValid = false, isRight = false;
         Arc targetArc = null;
         foreach(Arc arc in lastClicked.AdjacentArcs()){
             Node otherNode = arc.GetOtherNode(lastClicked);
@@ -94,6 +122,7 @@ public class GameManager : MonoBehaviour
             {
                 isValid = true;
                 targetArc = arc;
+                isRight = arc.isRight();
                 break;
             }
         }
@@ -101,20 +130,33 @@ public class GameManager : MonoBehaviour
             if (debug) Debug.Log("Movement unaccepted, not an adjacent node");
             return;
         }
-
-        movesBuffer.Add(targetArc, clickedNode);
+        movesBuffer.Add(targetArc, clickedNode, isRight);
         lastClicked.SetLastClicked(false);
         clickedNode.SetLastClicked(true);
         lastClicked = clickedNode;
     }
 
     public void OnPlayClicked(){
+        if (isPlaying) return;
+        mainCamera.transform.SetParent(player.transform);
+        mainCamera.transform.localPosition = new Vector3(0,0,-10);
+        isPlaying = true;
         lastClicked.SetLastClicked(false);
         storedMoves = movesBuffer.storedMoves;
         MovementManager.Instance.StartMovement(player, storedMoves[0]);
     }
 
     public void PlayNextMove(){
+        if (playGraph.IsEndingNode(player.currentNode)){
+            UIManager.Instance.Victory();
+            return;
+        }
+
+        if (storedMoves.Count == 0){
+            isMoving = false;
+            UIManager.Instance.GameOver();
+            return;
+        }
         storedMoves.RemoveAt(0);
         if (storedMoves.Count > 0){
             if (debug) Debug.Log("New move to be played");
@@ -122,10 +164,12 @@ public class GameManager : MonoBehaviour
             isMoving = true;
         } else {
             isMoving = false;
+            UIManager.Instance.GameOver();
         }
     }
 
     public void OnResetClicked(){
+        if (isPlaying) return;
         isResetting = true;
         movesBuffer.Reset();
     }
@@ -137,6 +181,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void OnUndoClicked(){
+        if (isPlaying) return;
         lastClicked = movesBuffer.Undo();
         if (lastClicked == null){
             lastClicked = graphData.startingNode;
@@ -172,19 +217,40 @@ public class GameManager : MonoBehaviour
             isPlayerTurn = !isPlayerTurn;
         }
         battleAnimation.gameObject.SetActive(true);
-        battleAnimation.StartBattle(battleMoves, player, enemy);
+        if (debug) Debug.Log($"Battle outcome is: enemy has {enemyHealth} and player {playerHealth}");
+        battleAnimation.StartBattle(battleMoves, player, enemy, playerHealth > 0);
+        
         if (playerHealth > 0){
             player.currentHealth = playerHealth;
+            pendingArc = arc;
+            if (debug) Debug.Log("Player survived this battle");
         } else {
-            GameOver();
+            if (debug) Debug.Log("Player perished in this battle");
         }
     }
 
+    public void DeleteEnemy(){
+        pendingArc.enemy.GetComponent<Animator>().SetTrigger("Death");
+        pendingArc.enemy = null;
+    }
+
     public void FinishedBattle(){
+        onStatsChanged?.Invoke(player);
         PlayNextMove();
     }
 
-    private void GameOver(){
-
+    public void GameOver(){
+        UIManager.Instance.GameOver();
     }
+
+    public void OnRetryClicked(){
+        Destroy(playGraph.gameObject);
+        StartGame();
+    }
+
+    public void OnNextClicked(){
+        currentLevel = Mathf.Max(levels.Count - 1, currentLevel + 1);
+        OnRetryClicked();
+    }
+
 }

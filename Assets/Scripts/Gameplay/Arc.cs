@@ -10,7 +10,7 @@ public class Arc : MonoBehaviour
     [SerializeField] private Node secondNode;
     [SerializeField] private bool isVertical;
     [SerializeField] private Transform spotEnemy;
-    [SerializeField] private Enemy enemy;
+    public Enemy enemy;
     public bool hasEnemy => ( enemy != null );
     public Enemy getEnemy => enemy;
     [SerializeField] private Transform spotPlayerLeft;
@@ -25,6 +25,8 @@ public class Arc : MonoBehaviour
     [SerializeField] private Image damageType;
     [SerializeField] private Image alertDamage;
 
+    private bool lastRight;
+
     public void Initialize(){
         if (isVertical){
             enemyUI.Rotate(0,0,-90);
@@ -35,8 +37,8 @@ public class Arc : MonoBehaviour
 
         if (enemy == null) Destroy(enemyUI.gameObject);
         else {
-            health.text = $"{enemy.currentHealth} / {enemy.maxHealth}";
-            damage.text = $"{enemy.minDamage} - {enemy.maxDamage}";
+            health.text = $"{enemy.maxHealth}";
+            damage.text = $"{enemy.minDamage} | {enemy.maxDamage}";
             switch (enemy.damageType){
                 case DamageTypes.Normal:
                     damageType.sprite = SpriteData.Instance.normalAttack;
@@ -50,11 +52,17 @@ public class Arc : MonoBehaviour
 
     public Node GetOtherNode(Node node){
         if (firstNode != node && secondNode != node) return null;
-        return firstNode == node ? secondNode : firstNode;
+        Node returnNode = firstNode == node ? secondNode : firstNode;
+        lastRight = returnNode.isRight(returnNode);
+        return returnNode;
     }
 
     public Transform GetClosestSpot(Node node){
         return ( Vector3.Distance(node.gameObject.transform.position, spotPlayerLeft.position) < Vector3.Distance(node.gameObject.transform.position, spotPlayerRight.position) ) ?
             spotPlayerRight : spotPlayerLeft;
+    }
+
+    public bool isRight(){
+        return lastRight;
     }
 }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3445811564667057740}
   - component: {fileID: 1650768160050052084}
   - component: {fileID: -1503288233930982014}
+  - component: {fileID: 8292668792565295164}
   m_Layer: 0
   m_Name: Mage
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4677727029413973915}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -74,8 +75,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 2223b0a570b66ee42b3e0a79f0789b2a, type: 3}
-  m_Color: {r: 1, g: 0.2783019, b: 0.2783019, a: 1}
+  m_Sprite: {fileID: -1239455689, guid: 1f0fdb8c70433e8448b0c20184895ac7, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -100,5 +101,25 @@ MonoBehaviour:
   damageType: 1
   maxHealth: 5
   currentHealth: 5
-  minAttack: 5
-  maxAttack: 1
+  minDamage: -4
+  maxDamage: 7
+--- !u!95 &8292668792565295164
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4677727029413973915}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ab7b47b0c6b14024ab82436b42ff789a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0

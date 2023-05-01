@@ -26,13 +26,16 @@ public class BattleAnimation : MonoBehaviour
 
     Coroutine battleCoroutine;
 
+    bool playerSurvived = true;
+
     void Start(){
         controller = new PlayerController();
         controller.Enable();
         controller.Battle.Skip.performed += (ctx) => EndBattle();
     }
 
-    public void StartBattle(List<BattleMove> battleMoves, Player dummyPlayer, Enemy dummyEnemy){
+    public void StartBattle(List<BattleMove> battleMoves, Player dummyPlayer, Enemy dummyEnemy, bool playerSurvived){
+        this.playerSurvived = playerSurvived;
         battleCoroutine = StartCoroutine(PlaySequence(battleMoves, dummyPlayer, dummyEnemy));
     }
 
@@ -43,6 +46,7 @@ public class BattleAnimation : MonoBehaviour
         int enemyCurrentHealth = dummyEnemy.currentHealth;
 
         playerObject = Instantiate(dummyPlayer.gameObject, spotPlayer);
+        Destroy(playerObject.transform.Find("Main Camera").gameObject);
         playerObject.transform.localPosition = Vector3.zero;
         playerHealth.text = dummyPlayer.currentHealth.ToString(); 
         int playerCurrentHealt = dummyPlayer.currentHealth;
@@ -72,7 +76,10 @@ public class BattleAnimation : MonoBehaviour
         if (battleCoroutine != null) StopCoroutine(battleCoroutine);
         Destroy(enemyObject);
         Destroy(playerObject);
-        MovementManager.Instance.FinishMovement();
+        if (playerSurvived)
+            MovementManager.Instance.FinishMovement();
+        else 
+            GameManager.Instance.GameOver();
         gameObject.SetActive(false);
         battleCoroutine = null;
     }

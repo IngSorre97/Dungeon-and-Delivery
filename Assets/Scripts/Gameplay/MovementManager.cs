@@ -20,7 +20,7 @@ public class MovementManager : MonoBehaviour
     public void StartMovement(Player player, MovesBuffer.Move move){
         bool hasEnemy = move.arc.hasEnemy;
         Transform destination = hasEnemy ? move.arc.GetClosestSpot(move.node) : move.node.transform;
-        player.SetNewDestination(hasEnemy ? null : move.node);
+        player.SetNewDestination(hasEnemy ? null : move.node, move.isRight);
         StartCoroutine(MoveCoroutine(player, destination, move.arc, move.node));
     }
 
@@ -44,9 +44,10 @@ public class MovementManager : MonoBehaviour
     }
 
     public void FinishMovement(){
+        GameManager.Instance.DeleteEnemy();
         StartCoroutine(FinishedBattle());
     }
-    
+
     public IEnumerator FinishedBattle(){
         if (GameManager.Instance.debug) Debug.Log("Pending movement coroutine is now going");
         float time = 0;

@@ -17,6 +17,8 @@ public class Node : MonoBehaviour
     [SerializeField] private Arc down;
     [SerializeField] private Arc left;
 
+    [SerializeField] private GameObject skeleton;
+
     [SerializeField] private List<int> indexes = new List<int>();
 
     public void OnMouseDown(){
@@ -82,6 +84,8 @@ public class Node : MonoBehaviour
 
     public void InitLoot(Loot lootPrefab)
     {
+        if (!isEndNode)
+            Destroy(skeleton);
         loot = Instantiate(lootPrefab, this.transform);
         if (!isEndNode && !isStartNode)
         {

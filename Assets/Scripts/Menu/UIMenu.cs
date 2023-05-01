@@ -11,10 +11,24 @@ public class UIMenu : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI dialogueBox;
     [SerializeField] List<string> dialogues;
+
+    [SerializeField] AudioSource soundEffects;
+    [SerializeField] AudioSource music;
+
+    [SerializeField] AudioClip backgroundMusic;
+    [SerializeField] AudioClip typing;
     private int index = 0;
     [SerializeField] private GameObject nextButton;
 
     private void Start(){
+        music.clip = backgroundMusic;
+        music.loop = true;
+        music.Play();
+
+        soundEffects.clip = typing;
+        soundEffects.loop = false;
+        soundEffects.Play();
+
         player.isTalking = true;
         player.StartTalking();
 
@@ -25,6 +39,8 @@ public class UIMenu : MonoBehaviour
     }
 
     public void OnNextClicked(){
+        soundEffects.Stop();
+        soundEffects.Play();
         player.isTalking = !player.isTalking;
         user.isTalking = !user.isTalking;
         index++;

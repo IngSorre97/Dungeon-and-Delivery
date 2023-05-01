@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void StartGame(){
+        AudioManager.Instance.StartGame();
         movesBuffer.NewGame();
 
         GameObject playGraphObject = Instantiate(levels[currentLevel].gameObject);
@@ -145,17 +146,20 @@ public class GameManager : MonoBehaviour
         lastClicked.SetLastClicked(false);
         storedMoves = movesBuffer.storedMoves;
         MovementManager.Instance.StartMovement(player, storedMoves[0]);
+        AudioManager.Instance.StartBattle();
     }
 
     public void NodeCheck(){
         if (playGraph.IsEndingNode(player.currentNode)){
             UIManager.Instance.Victory();
+            AudioManager.Instance.Victory();
             return;
         }
 
         if (storedMoves.Count == 0){
             isMoving = false;
             UIManager.Instance.GameOver();
+            AudioManager.Instance.Defeat();
             return;
         }
 
@@ -185,6 +189,7 @@ public class GameManager : MonoBehaviour
         } else {
             isMoving = false;
             UIManager.Instance.GameOver();
+            AudioManager.Instance.Defeat();
         }
     }
 

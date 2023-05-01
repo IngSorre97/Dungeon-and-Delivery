@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject lootChoiceScreen;
     [SerializeField] private GameObject lootChoicePrefab;
 
+
     void Start(){
         if (Instance == null) Instance = this;
         else Destroy(this);

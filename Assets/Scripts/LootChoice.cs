@@ -22,7 +22,6 @@ public class LootChoice : MonoBehaviour
     {
         if (underlyingItem)
         {
-            
             GameManager.Instance.PlayNextMove();
             if (!underlyingItem.consumable)
             {

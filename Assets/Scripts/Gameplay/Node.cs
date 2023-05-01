@@ -11,6 +11,7 @@ public class Node : MonoBehaviour
     [SerializeField] private Sprite background;
     [SerializeField] private Loot loot;
     [SerializeField] private bool isEndNode;
+    [SerializeField] private bool isStartNode;
     [SerializeField] private Arc up;
     [SerializeField] private Arc right;
     [SerializeField] private Arc down;
@@ -77,6 +78,20 @@ public class Node : MonoBehaviour
 
     public bool isRight(Node node){
         return node == right;
+    }
+
+    public void InitLoot(Loot lootPrefab)
+    {
+        loot = Instantiate(lootPrefab, this.transform);
+        if (!isEndNode && !isStartNode)
+        {
+            loot.InitializeLoot();
+        }
+    }
+
+    public Loot getLoot()
+    {
+        return loot;
     }
 
 

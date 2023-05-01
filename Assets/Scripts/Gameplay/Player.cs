@@ -29,4 +29,28 @@ public class Player : MonoBehaviour
             this.isRight = isRight;
         }
     }
+
+    public void EquipItem(Item item)
+    {
+        Debug.Log($"Equip : {item.itemName}");
+        applyItemEffects(item);
+    }
+
+    public void ConsumeItem(Item item)
+    {
+        Debug.Log($"Consume : {item.itemName}");
+        applyItemEffects(item);
+    }
+
+    private void applyItemEffects(Item item)
+    {
+        maxHealth += item.maxHealthModifier;
+        minDamage += item.minAttackModifier;
+        maxDamage += item.maxAttackModifier;
+        if (item.canOverheal)
+            currentHealth += item.currHealthModifier;
+        else
+            currentHealth = Mathf.Min(currentHealth + item.currHealthModifier, maxHealth);
+        GameManager.onStatsChanged?.Invoke(this);
+    }
 }

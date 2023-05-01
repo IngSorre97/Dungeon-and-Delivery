@@ -1,18 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class Loot : MonoBehaviour
+public class Loot: MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+
+    private const int LOOT_SIZE = 3;
+    [SerializeField] private SpriteRenderer[] renderers;
+    public List<Item> itemList = new List<Item>();
+    [SerializeField] private List<Item> availableItems;
+
+
+    public void InitializeLoot()
     {
-        
+        for(int i = 0; i < LOOT_SIZE; i++)
+        {
+            itemList.Add(randomItem());
+            renderers[i].sprite = itemList[i].icon;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private Item randomItem()
     {
-        
+        //TODO scelta random pesata su rarity
+        int[] weights = availableItems.Select(item => item.rarity).ToArray();
+        System.Random rnd = new System.Random();
+        return RandomUtils.Choice(rnd, availableItems, weights);
     }
 }

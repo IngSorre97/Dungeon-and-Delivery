@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private List<ScriptableObject> enemiesPool;
+    [SerializeField] private List<Item> availableLootItems;
 
     [SerializeField] private List<Graph> levels;
     private int currentLevel = 0;
@@ -158,9 +159,21 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        //Chiama PlayNextMove() quando hai finito
-        PlayNextMove();
-        // TODO Logica Item da prendere
+        if (!player.currentNode)
+        {
+            PlayNextMove();
+            return;
+        }
+        Loot currentLoot = player.currentNode.getLoot();
+        if (currentLoot)
+        {
+            UIManager.Instance.OpenLootChoice(currentLoot);
+        }
+        else
+        {
+            PlayNextMove();
+        }
+        
     }
 
     public void PlayNextMove(){
@@ -260,6 +273,16 @@ public class GameManager : MonoBehaviour
     public void OnNextClicked(){
         currentLevel = Mathf.Max(levels.Count - 1, currentLevel + 1);
         OnRetryClicked();
+    }
+
+    public void EquipItem(Item item)
+    {
+        player.EquipItem(item);
+    }
+
+    public void ConsumeItem(Item item)
+    {
+        player.ConsumeItem(item);
     }
 
 }

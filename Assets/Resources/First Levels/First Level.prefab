@@ -130,6 +130,7 @@ MonoBehaviour:
   arcs: {fileID: 4271762557704488534}
   endingNodes:
   - {fileID: 3482625773066964747}
+  lootPrefab: {fileID: 1654997971096274520, guid: b8cc1931015c8da47ac17bf6d6ec489c, type: 3}
 --- !u!1001 &234878319
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -784,6 +785,10 @@ PrefabInstance:
       propertyPath: left
       value: 
       objectReference: {fileID: 4925142522495258551}
+    - target: {fileID: 3410772731573560646, guid: 37c98aeca9e4db54f91fc9068a9c8851, type: 3}
+      propertyPath: isEndNode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6346387934921871369, guid: 37c98aeca9e4db54f91fc9068a9c8851, type: 3}
       propertyPath: m_Name
       value: Node (7)
@@ -1554,6 +1559,10 @@ PrefabInstance:
       propertyPath: right
       value: 
       objectReference: {fileID: 7869404143813479859}
+    - target: {fileID: 3410772731573560646, guid: 37c98aeca9e4db54f91fc9068a9c8851, type: 3}
+      propertyPath: isStartNode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6346387934921871369, guid: 37c98aeca9e4db54f91fc9068a9c8851, type: 3}
       propertyPath: m_Name
       value: Node (0)

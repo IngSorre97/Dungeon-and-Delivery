@@ -17,6 +17,8 @@ public class Graph : MonoBehaviour
     [SerializeField] private Transform nodes;
     [SerializeField] private Transform arcs;
     [SerializeField] private List<Node> endingNodes;
+    [SerializeField] private Loot lootPrefab;
+
     public bool IsEndingNode(Node node){
         return endingNodes.Contains(node);
     }
@@ -34,7 +36,14 @@ public class Graph : MonoBehaviour
     }
 
     private void InitializeNodes(){
-
+        foreach (Transform child in nodes)
+        {
+            Node node = child.gameObject.GetComponent<Node>();
+            if (node == null)
+                Debug.LogWarning("Found node " + child.name + " without the node component");
+            else
+                node.InitLoot(lootPrefab);
+        }
     }
 
     private void InitializeArcs(){

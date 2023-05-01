@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MovesBuffer;
 
 public class MovementManager : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class MovementManager : MonoBehaviour
     public void StartMovement(Player player, MovesBuffer.Move move){
         bool hasEnemy = move.arc.hasEnemy;
         Transform destination = hasEnemy ? move.arc.GetClosestSpot(move.node) : move.node.transform;
-        player.SetNewDestination(hasEnemy ? null : move.node, move.isRight);
+        player.SetNewDestination(move.node, move.isRight);
         StartCoroutine(MoveCoroutine(player, destination, move.arc, move.node));
     }
 
@@ -37,6 +38,7 @@ public class MovementManager : MonoBehaviour
             pendingDestination = node.transform;
             pendingPlayer = player;
             GameManager.Instance.StartBattle(arc);
+            
         } else {
             GameManager.Instance.NodeCheck();
         }

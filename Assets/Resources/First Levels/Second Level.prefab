@@ -129,7 +129,7 @@ MonoBehaviour:
   nodes: {fileID: 4177887986219708974}
   arcs: {fileID: 4271762557704488534}
   endingNodes:
-  - {fileID: 4833750203937873412}
+  - {fileID: 3482625773066964747}
   lootPrefab: {fileID: 1654997971096274520, guid: b8cc1931015c8da47ac17bf6d6ec489c, type: 3}
 --- !u!1001 &534546462988322753
 PrefabInstance:

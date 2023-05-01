@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
         GameObject playerObject = Instantiate(playerPrefab, graphData.startingNode.transform.position, Quaternion.identity);
         player = playerObject.GetComponent<Player>();
         player.Initialize(graphData.startingNode);
+        mainCamera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, -10);
         onStatsChanged?.Invoke(player);
 
         currentState = GameStates.Playing;
@@ -140,11 +141,12 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayClicked(){
         if (isPlaying) return;
+        storedMoves = movesBuffer.storedMoves;
+        if (storedMoves.Count == 0) return;
         mainCamera.transform.SetParent(player.transform);
         mainCamera.transform.localPosition = new Vector3(0,0,-10);
         isPlaying = true;
         lastClicked.SetLastClicked(false);
-        storedMoves = movesBuffer.storedMoves;
         MovementManager.Instance.StartMovement(player, storedMoves[0]);
         AudioManager.Instance.StartBattle();
     }
@@ -169,7 +171,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         Loot currentLoot = player.currentNode.getLoot();
-        if (currentLoot)
+        if (currentLoot && currentLoot.hasItems)
         {
             UIManager.Instance.OpenLootChoice(currentLoot);
         }
@@ -181,6 +183,15 @@ public class GameManager : MonoBehaviour
     }
 
     public void PlayNextMove(){
+        if (player.currentNode)
+        {
+            Loot currentLoot = player.currentNode.getLoot();
+            if (currentLoot)
+            {
+                currentLoot.Clear();
+            }
+        }
+        
         storedMoves.RemoveAt(0);
         if (storedMoves.Count > 0){
             if (debug) Debug.Log("New move to be played");
@@ -268,6 +279,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver(){
         UIManager.Instance.GameOver();
+        AudioManager.Instance.Defeat();
     }
 
     public void OnRetryClicked(){
@@ -276,7 +288,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void OnNextClicked(){
-        currentLevel = Mathf.Max(levels.Count - 1, currentLevel + 1);
+        currentLevel = Mathf.Min(levels.Count - 1, currentLevel + 1);
         OnRetryClicked();
     }
 

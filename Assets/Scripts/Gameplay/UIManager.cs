@@ -44,12 +44,14 @@ public class UIManager : MonoBehaviour
         gameOverScreen.SetActive(false);
         victoryScreen.SetActive(false);
         buttons.SetActive(true);
+        RemoveEquippedItems();
         GameManager.Instance.OnRetryClicked();
     }
 
     public void OnNextClicked(){
         victoryScreen.SetActive(false);
         buttons.SetActive(true);
+        RemoveEquippedItems();
         GameManager.Instance.OnNextClicked();
     }
 
@@ -79,5 +81,13 @@ public class UIManager : MonoBehaviour
         EquippedItemIcon eii = Instantiate(equippedItemIconPrefab, equippedItemsPanel.transform).GetComponent<EquippedItemIcon>();
         eii.SetIcon(icon);
         
+    }
+
+    public void RemoveEquippedItems()
+    {
+        foreach (Transform child in equippedItemsPanel.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
     }
 }
